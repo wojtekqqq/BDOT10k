@@ -1,0 +1,54 @@
+# This file contains metadata for your plugin. Beginning
+# with version 1.8 this is the preferred way to supply information about a
+# plugin. The current method of embedding metadata in __init__.py will
+# be supported until version 2.0
+
+# This file should be included when you package your plugin.
+
+# Mandatory items:
+
+
+[general]
+name=QGIS GML Application Schema Toolbox
+qgisMinimumVersion=3.14
+qgisMaximumVersion=3.99
+description=Consumption and use of GML complex features like INSPIRE harmonised data (vector), GeoSciML within QGIS
+about=This plugins allows to import Complex Features streams in QGIS either through a native XML mode or through a conversion to a relational database model.
+hasProcessingProvider=yes
+
+version=1.4.0-beta6
+changelog=
+ Version 1.4.0-beta6:
+ - Rework database selection: fix for spatialite selection #237 by @towa
+
+ Version 1.4.0-beta5:
+ - Bug fixes, mainly by @towa (Thanks!)
+
+ Version 1.4.0-beta4:
+ - fix some issues with the new database widget
+ - fix debug mode
+ - restore buttons related to foreign key management
+ - use a processing to convert GMLAS file to database and vice versa instead of subprocessed calls to GDAL
+ - dependencies upgrade
+
+
+
+# tags are comma separated with spaces allowed
+tags=complex features, gml, gmlas, application schema, INSPIRE, GeoSciML, WaterML
+
+homepage=https://brgm.github.io/gml_application_schema_toolbox/
+tracker=https://github.com/BRGM/gml_application_schema_toolbox/issues
+repository=https://github.com/BRGM/gml_application_schema_toolbox
+icon=resources/images/mActionAddGMLLayer.svg
+
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version
+deprecated=False
+
+# Author contact information
+author=BRGM, Oslandia, Copernicus, Camptocamp, Spatialys, titellus
+
+# email of the plugin administrator
+email=qgis@oslandia.com
