@@ -115,12 +115,19 @@ def import_in_qgis(gmlas_uri: str, provider: str, schema: Union[str, None] = Non
     if provider in ("sqlite", "SQLite"):
         provider = "ogr"
 
+    # set provider to postgres for SQLite
+    if provider in ("PostgreSQL", "postgresql"):
+        provider = "postgres"
+
     if schema is not None:
         schema_s = schema + "."
     else:
         schema_s = ""
 
     md = QgsProviderRegistry.instance().providerMetadata(provider)
+    #usunięcie prefixa PG z połączenia
+    gmlas_uri_clean = gmlas_uri.replace("PG:", "")
+    gmlas_uri = gmlas_uri_clean
     conn = md.createConnection(gmlas_uri, {})
     PlgLogger.log(message=f"DEBUG Connect to {conn.uri()}", log_level=4)
 

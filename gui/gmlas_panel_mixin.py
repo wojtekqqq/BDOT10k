@@ -23,7 +23,8 @@
 """
 # PyQGIS
 import processing
-
+import subprocess
+import shlex
 # 3rd party
 from osgeo import gdal
 from qgis.core import Qgis, QgsApplication, QgsProcessingFeedback
@@ -89,6 +90,42 @@ class GmlasPanelMixin:
             return 0
         return 1
 
+    def build_ogr2ogr_command(self,params, s_srs="epsg:2180", t_srs="epsg:2180"):
+        """
+        Generuje polecenie ogr2ogr jako listę argumentów subprocess
+        na podstawie słownika params w stylu QGIS Processing.
+
+        :param params: dict zawierający klucze INPUT, OUTPUT, OPTIONS
+        :param s_srs: źródłowy układ współrzędnych (domyślnie EPSG:2180)
+        :param t_srs: docelowy układ współrzędnych (domyślnie EPSG:2180)
+        :return: lista argumentów subprocess dla ogr2ogr
+        """
+
+        input_gmlas = params.get('INPUT')
+        output_pg = params.get('OUTPUT')
+
+        # Oczyszczenie connection string z pojedynczych cudzysłowów, jeśli występują
+        output_pg_clean = output_pg.replace("'", "") if output_pg else ""
+
+        # Rozbicie options na listę
+        options_str = params.get('OPTIONS', '')
+        options_list = shlex.split(options_str)
+
+        # Budowa komendy
+        cmd = [
+            "ogr2ogr",
+            "-f", "PostgreSQL",
+            "-s_srs", s_srs,
+            "-t_srs", t_srs,
+            output_pg_clean,
+            input_gmlas
+        ]
+
+        # Dodanie opcji na końcu
+        cmd.extend(options_list)
+
+        return cmd
+
     def translate_processing(self, params):
         """Use GDAL processing to convert GMLAS to database and vice versa.
 
@@ -102,7 +139,12 @@ class GmlasPanelMixin:
             )
             res = processing.run("gmlas:convertformat_gmlas", params, feedback=feedback)
         else:
-            self.log(message=f"gdal:convertformat with params = {params}", log_level=4)
-            res = processing.run("gdal:convertformat", params, feedback=feedback)
+            #zrezygnowanie z processing na rzecz subprosess z powodu dodawania pustego formatu
+            # self.log(message=f"gdal:convertformat with params = {params}", log_level=4)
+            # res = processing.run("gdal:convertformat", params, feedback=feedback)
+
+            cmd = self.build_ogr2ogr_command(params)
+            self.log(message=f"Polecenie ogr2ogr = {cmd}", log_level=4)
+            res = subprocess.run(cmd, check=True)
         self.log(message=str(res), log_level=4)
         self.log(message=feedback.textLog(), log_level=4)

@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="275cfc1c-85aa-4a57-88e4-a1f225b30638" name="Changes" comment="" />
+    <list default="true" id="275cfc1c-85aa-4a57-88e4-a1f225b30638" name="Changes" comment="start">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/load_gmlas_in_qgis.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/load_gmlas_in_qgis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/export_gmlas_panel.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/export_gmlas_panel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/gmlas_panel_mixin.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/gmlas_panel_mixin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/import_gmlas_panel.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/import_gmlas_panel.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,6 +18,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SET_USER_NAME_GLOBALLY" value="false" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -21,21 +28,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/gml_application_schema_toolbox",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "vcs.Git",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/gml_application_schema_toolbox&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -52,11 +61,33 @@
       <option name="presentableId" value="Default" />
       <updated>1750859652823</updated>
       <workItem from="1750859656111" duration="9020000" />
-      <workItem from="1750939635311" duration="3798000" />
+      <workItem from="1750939635311" duration="5094000" />
+      <workItem from="1751006093218" duration="3319000" />
+      <workItem from="1751025777634" duration="2371000" />
+      <workItem from="1751029123139" duration="258000" />
+      <workItem from="1751029460091" duration="295000" />
+      <workItem from="1751029981088" duration="40000" />
+      <workItem from="1751268231163" duration="58000" />
+      <workItem from="1751268911796" duration="18984000" />
+      <workItem from="1751353660067" duration="24066000" />
+      <workItem from="1751447017658" duration="24360000" />
     </task>
+    <task id="LOCAL-00001" summary="start">
+      <option name="closed" value="true" />
+      <created>1750943752142</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1750943752142</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="start" />
+    <option name="LAST_COMMIT_MESSAGE" value="start" />
   </component>
 </project>

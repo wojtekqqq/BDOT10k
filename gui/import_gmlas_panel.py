@@ -26,7 +26,9 @@ from io import BytesIO
 
 from osgeo import gdal, osr
 from owslib.etree import etree
-from qgis.core import QgsMessageLog
+from qgis.core import (
+    QgsMessageLog,
+    QgsProviderRegistry)
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import QApplication, QListWidgetItem, QMessageBox
@@ -51,6 +53,13 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         super(ImportGmlasPanel, self).__init__(parent)
         self.log = PlgLogger().log
         self.setupUi(self)
+
+        # załaduj database_widget.ui do tymczasowego QWidget
+        database_widget_path = os.path.join(
+            os.path.dirname(__file__), "..", "ui", "database_widget.ui"
+        )
+        temp_widget = QtWidgets.QWidget()
+        uic.loadUi(database_widget_path, temp_widget)
 
         # map to the plugin log handler
         self.plg_logger = PlgLogger()
@@ -281,7 +290,7 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         :rtype: dict
         """
         options = []
-        options.append(f"-f {provider}")
+        options.append(f"{provider}")
 
         gmlasconf = self.gmlas_config()
 
@@ -312,7 +321,7 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         gml_path = self.gml_path()
         self.plg_logger.log("GDAL OPTIONS: {}".format(options), log_level=4)
         params = {
-            "INPUT_FILE": f"GMLAS:{gml_path}",
+            "INPUT": f"GMLAS:{gml_path}",
             "CONVERT_ALL_LAYERS": True,
             "OPTIONS": " ".join(options),
             "OUTPUT": dest,
@@ -376,9 +385,10 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         db_format = self.databaseWidget.get_db_format
         # Create temp SQLite database if no connection is selected
         if db_format == "postgres":
-            dest_db_name = f"{self.databaseWidget.get_database_connection.uri()}"
+            #usunięcie dublowania providera w poleceniu
+            dest_db_name = f"PG:{self.databaseWidget.get_database_connection.uri()}"
             schema = self.databaseWidget.selected_schema
-            provider = "PostgreSQL"
+            provider = ''
             self.plg_logger.log(f"PostgreSQL schema: {schema}", log_level=4)
         elif db_format == "sqlite" or db_format == "spatialite":
             dest_db_name = self.databaseWidget.get_db_name_or_path
@@ -397,6 +407,10 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
             QApplication.setOverrideCursor(Qt.WaitCursor)
             gdal.PushErrorHandler(error_handler)
             self.translate_processing(params)
+            if db_format == "postgres":
+                dest_db_name = f"PG:{self.databaseWidget.get_database_connection.uri()}"
+                schema = self.databaseWidget.selected_schema
+                provider = 'postgres'
             self.plg_logger.log("Dataset translated", log_level=3)
             if append_to_db is None:
                 import_in_qgis(
