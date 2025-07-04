@@ -131,6 +131,37 @@ def import_in_qgis(gmlas_uri: str, provider: str, schema: Union[str, None] = Non
     conn = md.createConnection(gmlas_uri, {})
     PlgLogger.log(message=f"DEBUG Connect to {conn.uri()}", log_level=4)
 
+    # Krok 1. Pobierz ALTER TABLE jako string
+    sql_update_timestamptz = """
+                             SELECT string_agg(
+                                            'ALTER TABLE ' || table_schema || '.' || table_name ||
+                                            ' ALTER COLUMN ' || column_name ||
+                                            ' TYPE timestamp without time zone USING ' || column_name ||
+                                            ' AT TIME ZONE ''UTC'';',
+                                            ' '
+                                    )
+                             FROM information_schema.columns
+                             WHERE table_schema = 'public'
+                               AND data_type = 'timestamp with time zone'; \
+                             """
+
+    result_sql_update_timestamptz = conn.executeSql(sql_update_timestamptz)
+
+    # Krok 2. Jeśli wynik nie jest pusty, wykonaj ALTER TABLE
+    if result_sql_update_timestamptz and result_sql_update_timestamptz[0][0]:
+        alter_commands = result_sql_update_timestamptz[0][0]
+        commands = alter_commands.split(";")
+        for cmd in commands:
+            cmd = cmd.strip()
+            if cmd:
+                print("Wykonuję:", cmd)
+                conn.executeSql(cmd + ";")
+        PlgLogger.log(message="Wszystkie kolumny timestamptz skonwertowane na timestamp.", log_level=3)
+    else:
+        print("Brak kolumn timestamptz do konwersji.")
+        PlgLogger.log(message="Brak kolumn timestamptz do konwersji.", log_level=3)
+
+
     # get list of layers
     layers_attrs = {
         "layer_name": 0,
@@ -203,10 +234,10 @@ def import_in_qgis(gmlas_uri: str, provider: str, schema: Union[str, None] = Non
     projection_behavior = settings.value("Projections/defaultBehavior")
     projection_default = settings.value("Projections/layerDefaultCrs")
     settings.setValue("Projections/defaultBehavior", "useGlobal")
-    settings.setValue("Projections/layerDefaultCrs", "EPSG:4326")
+    settings.setValue("Projections/layerDefaultCrs", "EPSG:2180")
 
     # add layers
-    crs = QgsCoordinateReferenceSystem("EPSG:4326")
+    crs = QgsCoordinateReferenceSystem("EPSG:2180")
     for ln in sorted(layers.keys()):
         lyr = layers[ln]
         g_column = lyr["geometry_column"] or None

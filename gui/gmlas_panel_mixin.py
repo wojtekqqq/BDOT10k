@@ -139,12 +139,46 @@ class GmlasPanelMixin:
             )
             res = processing.run("gmlas:convertformat_gmlas", params, feedback=feedback)
         else:
-            #zrezygnowanie z processing na rzecz subprosess z powodu dodawania pustego formatu
-            # self.log(message=f"gdal:convertformat with params = {params}", log_level=4)
-            # res = processing.run("gdal:convertformat", params, feedback=feedback)
-
-            cmd = self.build_ogr2ogr_command(params)
-            self.log(message=f"Polecenie ogr2ogr = {cmd}", log_level=4)
-            res = subprocess.run(cmd, check=True)
+            self.log(message=f"gdal:convertformat with params = {params}", log_level=4)
+            res = processing.run("gdal:convertformat", params, feedback=feedback)
         self.log(message=str(res), log_level=4)
         self.log(message=feedback.textLog(), log_level=4)
+
+    def translate_processing_import(self, params):
+        """Use GDAL processing to convert GMLAS to database and vice versa.
+
+        :param params: Parameters for GDAL processing
+        :type params: dict
+        """
+        feedback = QgsProcessingFeedback()
+        if Qgis.versionInt() < 32400:
+            self.log(
+                message=f"gmlas:convertformat_gmlas with params = {params}", log_level=4
+            )
+            res = processing.run("gmlas:convertformat_gmlas", params, feedback=feedback)
+        else:
+            # zrezygnowanie z processing na rzecz subprosess z powodu dodawania pustego formatu
+            # self.log(message=f"gdal:convertformat with params = {params}", log_level=4)
+            # res = processing.run("gdal:convertformat", params, feedback=feedback)
+            #
+            #     cmd = self.build_ogr2ogr_command(params)
+            #     print("Wykonuję:", cmd)
+            #     self.log(message=f"Polecenie ogr2ogr = {cmd}", log_level=4)
+            #     res = subprocess.run(cmd, check=True)
+            # self.log(message=str(res), log_level=4)
+            # self.log(message=feedback.textLog(), log_level=4)
+
+            cmd = self.build_ogr2ogr_command(params)
+            print("Wykonuję:", cmd)
+            try:
+                res = subprocess.run(cmd, check=True, capture_output=True, text=True)
+                print("OGR2OGR STDOUT:", res.stdout)
+                print("OGR2OGR STDERR:", res.stderr)
+
+            except subprocess.CalledProcessError as e:
+                print("Błąd subprocess ogr2ogr:")
+                print("Return code:", e.returncode)
+                print("CMD:", e.cmd)
+                print("STDOUT:", e.stdout)
+                print("STDERR:", e.stderr)
+                raise

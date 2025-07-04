@@ -28,7 +28,8 @@ from osgeo import gdal, osr
 from owslib.etree import etree
 from qgis.core import (
     QgsMessageLog,
-    QgsProviderRegistry)
+    QgsProviderRegistry,
+    QgsCoordinateReferenceSystem)
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import QApplication, QListWidgetItem, QMessageBox
@@ -53,14 +54,6 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         super(ImportGmlasPanel, self).__init__(parent)
         self.log = PlgLogger().log
         self.setupUi(self)
-
-        # załaduj database_widget.ui do tymczasowego QWidget
-        database_widget_path = os.path.join(
-            os.path.dirname(__file__), "..", "ui", "database_widget.ui"
-        )
-        temp_widget = QtWidgets.QWidget()
-        uic.loadUi(database_widget_path, temp_widget)
-
         # map to the plugin log handler
         self.plg_logger = PlgLogger()
         self.plg_settings = PlgOptionsManager().get_plg_settings()
@@ -77,6 +70,9 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
 
         self.parent = parent
         self._gml_path = gml_path
+
+        default_crs = QgsCoordinateReferenceSystem("EPSG:2180")
+        self.sourceSrs.setCrs(default_crs)
 
     def gml_path(self):
         if self._gml_path:
@@ -227,7 +223,7 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
                     options.append("-lco OVERWRITE=YES")
         # Reproject
         # TODO Remove default SRID when we will handle destSrs widget
-        options.append("-lco SRID=4326")
+        # options.append("-lco SRID=2180")
         if self.reprojectCheck.isChecked():
             options.append(f"-lco SRID={self.destSrs.crs().authid()}")
             self.plg_logger.log(
@@ -304,6 +300,16 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         # TODO Handle source CRS with widget
         # if self.sourceSrsCheck.isChecked():
         #     params["srcSRS"] = self.src_srs()
+
+        # # Handle source CRS with widget
+        # if hasattr(self, "sourceSrsCheck") and self.sourceSrsCheck.isChecked():
+        #     crs_authid = self.sourceSrs.crs().authid()
+        #     options.append(f"-s_srs {crs_authid}")
+        #
+        # # Handle dest CRS with widget
+        # if hasattr(self, "destSrsCheck") and self.destSrsCheck.isChecked():
+        #     dest_crs_authid = self.destSrs.crs().authid()
+        #     options.append(f"-t_srs {dest_crs_authid}")
 
         if self.convertToLinearCheckbox.isChecked():
             options.append("-nlt CONVERT_TO_LINEAR")
@@ -406,7 +412,7 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         try:
             QApplication.setOverrideCursor(Qt.WaitCursor)
             gdal.PushErrorHandler(error_handler)
-            self.translate_processing(params)
+            self.translate_processing_import(params)
             if db_format == "postgres":
                 dest_db_name = f"PG:{self.databaseWidget.get_database_connection.uri()}"
                 schema = self.databaseWidget.selected_schema
