@@ -80,24 +80,41 @@ class LoadWizardDataSource(QWizardPage, PAGE_1_W):
 
     @pyqtSlot()
     def on_gmlPathButton_clicked(self):
-        gml_path = self.plg_settings.last_file or self.plg_settings.last_path
-
-        filepath, _ = QFileDialog.getOpenFileName(
+        folder = QFileDialog.getExistingDirectory(
             parent=self,
-            caption=self.tr("Open GML file"),
-            directory=gml_path,
-            filter=self.tr("GML files or XSD (*.gml *.xml *.xsd)"),
+            caption=self.tr("Select folder with GML files"),
+            directory=self.plg_settings.last_path or "."
         )
-        if filepath:
+        if folder:
             self.plg_settings_mngr.set_value_from_key(
-                key="last_path", value=os.path.dirname(filepath)
+                key="last_path", value=folder
             )
-            self.plg_settings_mngr.set_value_from_key(key="last_file", value=filepath)
+            self.plg_settings_mngr.set_value_from_key(key="last_file", value=folder)
 
-            self.gmlPathLineEdit.setText(filepath)
+            self.gmlPathLineEdit.setText(folder)
             self.log(
-                message=f"GMLAS configuration file selected: {filepath}", log_level=4
+                message=f"GMLAS folder selected: {folder}", log_level=4
             )
+
+    # def on_gmlPathButton_clicked(self):
+    #     gml_path = self.plg_settings.last_file or self.plg_settings.last_path
+    #
+    #     filepath, _ = QFileDialog.getOpenFileName(
+    #         parent=self,
+    #         caption=self.tr("Open GML file"),
+    #         directory=gml_path,
+    #         filter=self.tr("GML files or XSD (*.gml *.xml *.xsd)"),
+    #     )
+    #     if filepath:
+    #         self.plg_settings_mngr.set_value_from_key(
+    #             key="last_path", value=os.path.dirname(filepath)
+    #         )
+    #         self.plg_settings_mngr.set_value_from_key(key="last_file", value=filepath)
+    #
+    #         self.gmlPathLineEdit.setText(filepath)
+    #         self.log(
+    #             message=f"GMLAS configuration file selected: {filepath}", log_level=4
+    #         )
 
     def download(self, output_path: str):
         """Download (if gmlPath is a HTTP URL) or copy a local file to tha output path.
@@ -232,19 +249,43 @@ class LoadWizard(QWizard):
     def sizeHint(self):
         return self._gmlas_page._layout.minimumSize()
 
+    import os
+
     def gml_path(self):
         if self._gml_path is None:
             if self._data_source_page.nextId() == PAGE_ID_WFS:
                 with WaitCursor():
-                    # if WFS features, download them first
                     with NamedTemporaryFile(suffix=".gml") as out:
                         gml_path = out.name
                     self._wfs_page.download(gml_path)
-
-                self._gml_path = gml_path
+                self._gml_path = [gml_path]
             elif self._data_source_page.nextId() == PAGE_ID_LOADING:
-                self._gml_path = self._data_source_page.gmlPathLineEdit.text()
+                selected_path = self._data_source_page.gmlPathLineEdit.text()
+                # Jeśli ścieżka to folder, zwróć listę plików
+                if os.path.isdir(selected_path):
+                    files = []
+                    for filename in os.listdir(selected_path):
+                        if filename.endswith(".xml") or filename.endswith(".gml"):
+                            files.append(os.path.join(selected_path, filename))
+                    self._gml_path = files
+                else:
+                    # Jeśli to plik, zwróć listę jednoelementową
+                    self._gml_path = [selected_path]
         return self._gml_path
+
+    # def gml_path(self):
+    #     if self._gml_path is None:
+    #         if self._data_source_page.nextId() == PAGE_ID_WFS:
+    #             with WaitCursor():
+    #                 # if WFS features, download them first
+    #                 with NamedTemporaryFile(suffix=".gml") as out:
+    #                     gml_path = out.name
+    #                 self._wfs_page.download(gml_path)
+    #
+    #             self._gml_path = gml_path
+    #         elif self._data_source_page.nextId() == PAGE_ID_LOADING:
+    #             self._gml_path = self._data_source_page.gmlPathLineEdit.text()
+    #     return self._gml_path
 
     def download_to(self, output_path):
         if self._data_source_page.nextId() == PAGE_ID_WFS:

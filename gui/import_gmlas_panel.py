@@ -73,6 +73,11 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
 
         default_crs = QgsCoordinateReferenceSystem("EPSG:2180")
         self.sourceSrs.setCrs(default_crs)
+# zmiana na folder
+    # def gml_path(self):
+    #     if self._gml_path:
+    #         return self._gml_path
+    #     return self.parent.gml_path()
 
     def gml_path(self):
         if self._gml_path:
@@ -271,6 +276,36 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
             options.append("-skipfailures")
         return options
 
+    def import_params_single(self, gml_file: str, dest: str, provider: str) -> dict:
+        options = []
+        options.append(f"{provider}")
+
+        gmlasconf = self.gmlas_config()
+        options.append(f"-oo CONFIG_FILE={gmlasconf}")
+
+        if self.ogrExposeMetadataLayersCheckbox.isChecked():
+            options.append("-oo EXPOSE_METADATA_LAYERS=YES")
+
+        if self.convertToLinearCheckbox.isChecked():
+            options.append("-nlt CONVERT_TO_LINEAR")
+
+        dataset_creation_options = self.dataset_creation_options()
+        options.extend(dataset_creation_options)
+        layer_creation_options = self.layer_creation_options()
+        options.extend(layer_creation_options)
+        translation_options = self.translate_options()
+        options.extend(translation_options)
+
+        self.plg_logger.log("GDAL OPTIONS: {}".format(options), log_level=4)
+
+        params = {
+            "INPUT": f"GMLAS:{gml_file}",
+            "CONVERT_ALL_LAYERS": True,
+            "OPTIONS": " ".join(options),
+            "OUTPUT": dest,
+        }
+        return params
+
     def import_params(self, dest: str, provider: str) -> dict:
         """Build the parameters dictionary for GDAL import.
 
@@ -323,8 +358,9 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
 
         # if self.plg_settings.debug_mode:
         #     options.append("--debug ON")
-
+        # zmiana na folder
         gml_path = self.gml_path()
+
         self.plg_logger.log("GDAL OPTIONS: {}".format(options), log_level=4)
         params = {
             "INPUT": f"GMLAS:{gml_path}",
@@ -405,9 +441,13 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
                 provider = "SQLite"
                 self.plg_logger.log(f"Temp SQLite: {dest_db_name}", log_level=4)
 
-        params = self.import_params(dest_db_name, provider)
+        # params = self.import_params(dest_db_name, provider)
+        for gml_file in self.gml_path():
+            params = self.import_params_single(gml_file, dest_db_name, provider)
+            self.translate_processing_import(params)
 
         # TODO Handle append_to_db, accessMode, append_to_schema
+        # return
 
         try:
             QApplication.setOverrideCursor(Qt.WaitCursor)

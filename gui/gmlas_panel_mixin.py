@@ -161,24 +161,8 @@ class GmlasPanelMixin:
             # self.log(message=f"gdal:convertformat with params = {params}", log_level=4)
             # res = processing.run("gdal:convertformat", params, feedback=feedback)
             #
-            #     cmd = self.build_ogr2ogr_command(params)
-            #     print("Wykonuję:", cmd)
-            #     self.log(message=f"Polecenie ogr2ogr = {cmd}", log_level=4)
-            #     res = subprocess.run(cmd, check=True)
-            # self.log(message=str(res), log_level=4)
-            # self.log(message=feedback.textLog(), log_level=4)
-
             cmd = self.build_ogr2ogr_command(params)
-            print("Wykonuję:", cmd)
-            try:
-                res = subprocess.run(cmd, check=True, capture_output=True, text=True)
-                print("OGR2OGR STDOUT:", res.stdout)
-                print("OGR2OGR STDERR:", res.stderr)
-
-            except subprocess.CalledProcessError as e:
-                print("Błąd subprocess ogr2ogr:")
-                print("Return code:", e.returncode)
-                print("CMD:", e.cmd)
-                print("STDOUT:", e.stdout)
-                print("STDERR:", e.stderr)
-                raise
+            self.log(message=f"Polecenie ogr2ogr = {cmd}", log_level=4)
+            res = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        self.log(message=str(res), log_level=4)
+        self.log(message=feedback.textLog(), log_level=4)
