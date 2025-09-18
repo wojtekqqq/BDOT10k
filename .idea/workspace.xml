@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="275cfc1c-85aa-4a57-88e4-a1f225b30638" name="Changes" comment="poprawki importu, dodanie sql zmieniającego kolumny timestamptz">
+    <list default="true" id="275cfc1c-85aa-4a57-88e4-a1f225b30638" name="Changes" comment="dodany import wszystkich plików z katalogu">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui/gmlas_panel_mixin.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/gmlas_panel_mixin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/load_gmlas_in_qgis.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/load_gmlas_in_qgis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/import_gmlas_panel.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/import_gmlas_panel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui/load_wizard.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/load_wizard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/import_gmlas_panel.ui" beforeDir="false" afterPath="$PROJECT_DIR$/ui/import_gmlas_panel.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +61,6 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-PY-251.26094.141" />
         <option value="bundled-python-sdk-9f8e2b94138c-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26094.141" />
       </set>
     </attachedChunks>
@@ -84,7 +83,8 @@
       <workItem from="1751268911796" duration="18984000" />
       <workItem from="1751353660067" duration="24066000" />
       <workItem from="1751447017658" duration="39148000" />
-      <workItem from="1751607381585" duration="23119000" />
+      <workItem from="1751607381585" duration="23229000" />
+      <workItem from="1754384992817" duration="39000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <option name="closed" value="true" />
@@ -110,16 +110,36 @@
       <option name="project" value="LOCAL" />
       <updated>1751627509546</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="dodany import wszystkich plików z katalogu">
+      <option name="closed" value="true" />
+      <created>1751635970060</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1751635970060</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="start" />
     <MESSAGE value="dostosowanie importu pojedyńczego pliku xml do bazy postgreSQL" />
     <MESSAGE value="poprawki importu, dodanie sql zmieniającego kolumny timestamptz" />
-    <option name="LAST_COMMIT_MESSAGE" value="poprawki importu, dodanie sql zmieniającego kolumny timestamptz" />
+    <MESSAGE value="dodany import wszystkich plików z katalogu" />
+    <option name="LAST_COMMIT_MESSAGE" value="dodany import wszystkich plików z katalogu" />
   </component>
 </project>

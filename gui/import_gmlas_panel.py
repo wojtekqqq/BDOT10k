@@ -73,7 +73,9 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
 
         default_crs = QgsCoordinateReferenceSystem("EPSG:2180")
         self.sourceSrs.setCrs(default_crs)
-# zmiana na folder
+        self.importProgressBar
+
+    # zmiana na folder
     # def gml_path(self):
     #     if self._gml_path:
     #         return self._gml_path
@@ -430,21 +432,33 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
             #usunięcie dublowania providera w poleceniu
             dest_db_name = f"PG:{self.databaseWidget.get_database_connection.uri()}"
             schema = self.databaseWidget.selected_schema
-            provider = ''
+            provider2 = ''
             self.plg_logger.log(f"PostgreSQL schema: {schema}", log_level=4)
         elif db_format == "sqlite" or db_format == "spatialite":
             dest_db_name = self.databaseWidget.get_db_name_or_path
-            provider = "SQLite"
+            provider2 = "SQLite"
         else:
             with tempfile.NamedTemporaryFile(suffix=".sqlite") as tmp:
                 dest_db_name = tmp.name
-                provider = "SQLite"
+                provider2 = "SQLite"
                 self.plg_logger.log(f"Temp SQLite: {dest_db_name}", log_level=4)
 
         # params = self.import_params(dest_db_name, provider)
-        for gml_file in self.gml_path():
-            params = self.import_params_single(gml_file, dest_db_name, provider)
+        # Przygotowanie progress bara
+        self.importProgressBar.setVisible(True)
+        self.importProgressBar.setValue(0)
+        gml_files = self.gml_path()
+        total = len(gml_files)
+
+        for idx, gml_file in enumerate(gml_files, start=1):
+            self.plg_logger.log(f"Importing file {gml_file} ({idx}/{total})", log_level=3)
+        # for gml_file in self.gml_path():
+            params = self.import_params_single(gml_file, dest_db_name, provider2)
             self.translate_processing_import(params)
+            # aktualizacja progress bara
+            progress = int((idx / total) * 100)
+            self.importProgressBar.setValue(progress)
+            QApplication.processEvents()  # ważne, aby GUI się aktualizowało
 
         # TODO Handle append_to_db, accessMode, append_to_schema
         # return
@@ -452,7 +466,7 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         try:
             QApplication.setOverrideCursor(Qt.WaitCursor)
             gdal.PushErrorHandler(error_handler)
-            self.translate_processing_import(params)
+            # self.translate_processing_import(params)
             if db_format == "postgres":
                 dest_db_name = f"PG:{self.databaseWidget.get_database_connection.uri()}"
                 schema = self.databaseWidget.selected_schema
@@ -472,3 +486,4 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         finally:
             QApplication.restoreOverrideCursor()
             gdal.PopErrorHandler()
+            self.importProgressBar.setValue(100)

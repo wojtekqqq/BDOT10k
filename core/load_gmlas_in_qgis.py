@@ -39,7 +39,8 @@ from gml_application_schema_toolbox.gui.qgis_form_custom_widget import (
     install_viewer_on_feature_form,
 )
 from gml_application_schema_toolbox.toolbelt.log_handler import PlgLogger
-
+from qgis.PyQt.QtCore import QT_VERSION_STR
+from qgis.core import QgsAttributeEditorContainer
 
 def _qgis_layer(
     uri,
@@ -412,18 +413,41 @@ def import_in_qgis(gmlas_uri: str, provider: str, schema: Union[str, None] = Non
         fc.setLayout(QgsEditFormConfig.TabLayout)
         # Add fields
         c = QgsAttributeEditorContainer("Main", fc.invisibleRootContainer())
-        c.setIsGroupBox(False)  # a tab
+        # c.setIsGroupBox(False)  # a tab
+        # c.setContainerType(QgsAttributeEditorContainer.TypeTab)
+        if hasattr(c, "setContainerType"):
+            c.setContainerType(QgsAttributeEditorContainer.TypeTab)
+        else:
+            c.setIsGroupBox(False)
+
         for idx, f in enumerate(couche.fields()):
             c.addChildElement(QgsAttributeEditorField(f.name(), idx, c))
         fc.addTab(c)
 
+        # # Add 1:N relations
+        # c_1_n = QgsAttributeEditorContainer("1:N links", fc.invisibleRootContainer())
+        # c_1_n.setIsGroupBox(False)  # a tab
+        # fc.addTab(c_1_n)
+        #
+        # for rel in lyr["1_n"]:
+        #     c_1_n.addChildElement(QgsAttributeEditorRelation(rel.name(), rel, c_1_n))
         # Add 1:N relations
+
         c_1_n = QgsAttributeEditorContainer("1:N links", fc.invisibleRootContainer())
-        c_1_n.setIsGroupBox(False)  # a tab
+
+        # Zabezpieczenie: użyj setContainerType jeśli dostępne
+        if hasattr(c_1_n, "setContainerType"):
+            # Nowy sposób w QGIS 3.28+ (lub 3.30+)
+            c_1_n.setContainerType(QgsAttributeEditorContainer.TypeTab)
+        else:
+            # Dla starszych wersji QGIS
+            c_1_n.setIsGroupBox(False)
+
         fc.addTab(c_1_n)
 
         for rel in lyr["1_n"]:
-            c_1_n.addChildElement(QgsAttributeEditorRelation(rel.name(), rel, c_1_n))
+            rel_editor = QgsAttributeEditorRelation(rel.name(), rel, c_1_n)
+            c_1_n.addChildElement(rel_editor)
 
         couche.setEditFormConfig(fc)
 
