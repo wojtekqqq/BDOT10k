@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="275cfc1c-85aa-4a57-88e4-a1f225b30638" name="Changes" comment="dodany import wszystkich plików z katalogu">
+    <list default="true" id="275cfc1c-85aa-4a57-88e4-a1f225b30638" name="Changes" comment="poprawki importu">
+      <change afterPath="$PROJECT_DIR$/templete_scripts/Rejestry_publiczne/Szkoly.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templete_scripts/create_postgis_db.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/load_gmlas_in_qgis.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/load_gmlas_in_qgis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/import_gmlas_panel.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/import_gmlas_panel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/import_gmlas_panel.ui" beforeDir="false" afterPath="$PROJECT_DIR$/ui/import_gmlas_panel.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,8 +43,9 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;/root/.local/share/JetBrains/PyCharm2025.1/Shell Script/shellcheck&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/gml_application_schema_toolbox&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/gml_application_schema_toolbox/0601_GML2/PL.PZGiK.3700.0601/BDOT10k&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -58,6 +60,11 @@
     ]
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/0601_GML2/PL.PZGiK.3700.0601/BDOT10k" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -118,7 +125,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751635970060</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="poprawki importu">
+      <option name="closed" value="true" />
+      <created>1758198226427</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1758198226427</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,6 +155,7 @@
     <MESSAGE value="dostosowanie importu pojedyńczego pliku xml do bazy postgreSQL" />
     <MESSAGE value="poprawki importu, dodanie sql zmieniającego kolumny timestamptz" />
     <MESSAGE value="dodany import wszystkich plików z katalogu" />
-    <option name="LAST_COMMIT_MESSAGE" value="dodany import wszystkich plików z katalogu" />
+    <MESSAGE value="poprawki importu" />
+    <option name="LAST_COMMIT_MESSAGE" value="poprawki importu" />
   </component>
 </project>

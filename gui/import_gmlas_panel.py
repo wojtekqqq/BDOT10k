@@ -41,6 +41,7 @@ from gml_application_schema_toolbox.core.proxy import qgis_proxy_settings
 from gml_application_schema_toolbox.gui import InputError
 from gml_application_schema_toolbox.gui.gmlas_panel_mixin import GmlasPanelMixin
 from gml_application_schema_toolbox.toolbelt import PlgLogger, PlgOptionsManager
+from lxml import etree
 
 WIDGET, BASE = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "..", "ui", "import_gmlas_panel.ui")
@@ -291,6 +292,9 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         if self.convertToLinearCheckbox.isChecked():
             options.append("-nlt CONVERT_TO_LINEAR")
 
+        # options.append("-lco FID=uuid")
+        # options.append("-lco GML_ID=uuid")
+
         dataset_creation_options = self.dataset_creation_options()
         options.extend(dataset_creation_options)
         layer_creation_options = self.layer_creation_options()
@@ -455,6 +459,15 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         # for gml_file in self.gml_path():
             params = self.import_params_single(gml_file, dest_db_name, provider2)
             self.translate_processing_import(params)
+
+            # --- TU DODAJEMY POWIĄZANIE gml:id → ogr_pkid ---
+            md = QgsProviderRegistry.instance().providerMetadata("postgres")
+            conn = md.createConnection(self.databaseWidget.get_database_connection.uri(), {})
+            # self.update_ogr_pkid_from_xml(gml_file, conn, schema)
+            # self.update_ogr_pkid_from_xml(gml_file, conn, schema)
+            self.update_ogr_pkid_from_xml_geometry(gml_file, conn, schema)
+            # ------------------------------------------------
+
             # aktualizacja progress bara
             progress = int((idx / total) * 100)
             self.importProgressBar.setValue(progress)

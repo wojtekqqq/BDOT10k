@@ -177,7 +177,7 @@ def import_in_qgis(gmlas_uri: str, provider: str, schema: Union[str, None] = Non
     PlgLogger.log(message=f"DEBUG Get list of layers with query : {sql}", log_level=4)
     try:
         result = conn.executeSql(sql)
-        PlgLogger.log(message=f"DEBUG List of layers : {result}", log_level=4)
+        # PlgLogger.log(message=f"DEBUG List of layers : {result}", log_level=4)
     except QgsProviderConnectionException as err:
         PlgLogger.log(message=err, log_level=2, push=True)
 
@@ -219,7 +219,7 @@ def import_in_qgis(gmlas_uri: str, provider: str, schema: Union[str, None] = Non
             result = conn.executeSql(sql)
         except QgsProviderConnectionException as err:
             PlgLogger.log(message=err, log_level=2, push=True)
-        PlgLogger.log(message=f"DEBUG List of fields : {result}", log_level=4)
+        # PlgLogger.log(message=f"DEBUG List of fields : {result}", log_level=4)
         for f in result:
             field_name, field_xpath = (
                 f[fields_attrs["field_name"]],
@@ -297,12 +297,12 @@ def import_in_qgis(gmlas_uri: str, provider: str, schema: Union[str, None] = Non
     with open(DIR_PLUGIN_ROOT / "sql/get_1_1_relations.sql", "r") as f:
         sql = f.read().format(schema=schema_s)
 
-    PlgLogger.log(message=f"DEBUG Add relations 1:1 with query : {sql}", log_level=4)
+    # PlgLogger.log(message=f"DEBUG Add relations 1:1 with query : {sql}", log_level=4)
     try:
         result = conn.executeSql(sql)
     except QgsProviderConnectionException as err:
         PlgLogger.log(message=err, log_level=2, push=True)
-    PlgLogger.log(message=f"DEBUG Relations 1:1 : {result}", log_level=4)
+    # PlgLogger.log(message=f"DEBUG Relations 1:1 : {result}", log_level=4)
     if result is not None:
         for f in result:
             rel = QgsRelation()
