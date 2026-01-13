@@ -269,6 +269,20 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="updateFromGeometryCheckbox">
+            <property name="toolTip">
+             <string>Aktualizuje kolumnę ogr_pkid wartością gml:id z geometrii (np. gml:Point/gml:Curve/gml:Polygon)
+             </string>
+            </property>
+            <property name="text">
+             <string>Oryginalne gmlid geometrii</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="skipFailuresCheckbox">
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Continue after a failure, skipping the failed feature.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

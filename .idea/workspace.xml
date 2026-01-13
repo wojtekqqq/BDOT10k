@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="275cfc1c-85aa-4a57-88e4-a1f225b30638" name="Changes" comment="poprawki importu">
-      <change afterPath="$PROJECT_DIR$/templete_scripts/Rejestry_publiczne/Szkoly.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templete_scripts/create_postgis_db.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/load_gmlas_in_qgis.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/load_gmlas_in_qgis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/import_gmlas_panel.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/import_gmlas_panel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/import_gmlas_panel.ui" beforeDir="false" afterPath="$PROJECT_DIR$/ui/import_gmlas_panel.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

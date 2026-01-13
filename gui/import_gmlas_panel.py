@@ -408,6 +408,99 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
         #     assert srs.Validate() == 0
         #     params["spatSRS"] = srs
 
+
+
+    def update_ogr_pkid_from_xml_geometry(self, xml_path: str, conn, schema: str):
+        """
+        Aktualizuje ogr_pkid w tabelach BDOT10k na podstawie gml:id z GEOMETRII:
+        - gml:Point  (obiekty _P)
+        - gml:Curve  (obiekty _L)
+        - gml:Polygon (obiekty _A)
+
+        Powiązanie: lokalnyId (XML) ↔ lokalnyid (PostgreSQL)
+        """
+
+        self.plg_logger.log(
+            f"🔄 Aktualizacja ogr_pkid z geometrii (P/L/A): {xml_path}",
+            log_level=3
+        )
+
+        ns = {
+            "gml": "http://www.opengis.net/gml/3.2",
+            "ot": "urn:gugik:specyfikacje:gmlas:bazaDanychObiektowTopograficznych10k:2.0"
+        }
+
+        try:
+            tree = etree.parse(xml_path)
+        except Exception as e:
+            self.plg_logger.log(f"❌ Nie można otworzyć XML: {e}", log_level=2)
+            return
+
+        root = tree.getroot()
+        features = root.findall(".//gml:featureMember", ns)
+
+        if not features:
+            self.plg_logger.log("⚠️ Brak <gml:featureMember> w XML.", log_level=2)
+            return
+
+        updates = []
+
+        for fm in features:
+            # np. <ot:OT_BUZM_L>, <ot:OT_BUHD_A>, <ot:OT_BUIT_P>
+            feature = list(fm)[0]
+            table_name = feature.tag.split("}")[-1].lower()
+
+            lokalny_el = feature.find("ot:lokalnyId", ns)
+            if lokalny_el is None or not lokalny_el.text:
+                continue
+
+            lokalny_id = lokalny_el.text.strip()
+
+            # --- GEOMETRIA ---
+            geom_container = feature.find("ot:geometria", ns)
+            if geom_container is None or len(geom_container) == 0:
+                continue
+
+            # Pierwszy element wewnątrz <ot:geometria>
+            geom = geom_container[0]
+
+            geom_tag = geom.tag.split("}")[-1]
+            if geom_tag not in ("Point", "Curve", "Polygon"):
+                continue
+
+            geom_gml_id = geom.attrib.get(f"{{{ns['gml']}}}id")
+            if not geom_gml_id:
+                continue
+
+            updates.append(
+                f"UPDATE {schema}.{table_name} "
+                f"SET ogr_pkid = '{geom_gml_id}' "
+                f"WHERE lokalnyid = '{lokalny_id}';"
+            )
+
+        if not updates:
+            self.plg_logger.log(
+                "⚠️ Brak danych do aktualizacji ogr_pkid z geometrii (P/L/A).",
+                log_level=2
+            )
+            return
+
+        self.plg_logger.log(
+            f"🛠️ Wykonywanie {len(updates)} aktualizacji ogr_pkid...",
+            log_level=3
+        )
+
+        for sql in updates:
+            try:
+                conn.executeSql(sql)
+            except Exception as e:
+                self.plg_logger.log(f"❌ Błąd SQL: {e}", log_level=2)
+
+        self.plg_logger.log(
+            "✅ Aktualizacja ogr_pkid z geometrii (P/L/A) zakończona.",
+            log_level=3
+        )
+
     def do_load(self, append_to_db: str = None, append_to_schema: str = None):
         """Load selected GMLAS into a database. If no database is selected \
         (placeholder), a temporary SQLite database is created.
@@ -463,9 +556,15 @@ class ImportGmlasPanel(BASE, WIDGET, GmlasPanelMixin):
             # --- TU DODAJEMY POWIĄZANIE gml:id → ogr_pkid ---
             md = QgsProviderRegistry.instance().providerMetadata("postgres")
             conn = md.createConnection(self.databaseWidget.get_database_connection.uri(), {})
-            # self.update_ogr_pkid_from_xml(gml_file, conn, schema)
-            # self.update_ogr_pkid_from_xml(gml_file, conn, schema)
-            self.update_ogr_pkid_from_xml_geometry(gml_file, conn, schema)
+
+            # Jeśli zaznaczono opcję aktualizacji ogr_pkid z geometrii
+            if self.updateFromGeometryCheckbox.isChecked():
+                self.update_ogr_pkid_from_xml_geometry(
+                    xml_path=gml_file,
+                    conn=conn,
+                    schema=schema
+                )
+            # self.update_ogr_pkid_from_xml_geometry(gml_file, conn, schema)
             # ------------------------------------------------
 
             # aktualizacja progress bara
